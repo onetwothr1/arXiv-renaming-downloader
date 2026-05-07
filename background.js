@@ -9,14 +9,50 @@ importScripts('utils.js');
 // 1. Intercept any arxiv PDF download and suggest custom filename
 // ============================================================
 chrome.downloads.onDeterminingFilename.addListener((item, suggest) => {
-  const match = item.url.match(/arxiv\.org\/pdf\/([^/?#]+)/);
-  if (!match) return;
+  // 1. Try to match from direct URLs (url, finalUrl, referrer)
+  const urlsToTest = [item.url, item.finalUrl, item.referrer].filter(Boolean);
+  let rawId = null;
 
-  const rawId = match[1].replace(/\.pdf$/i, '').replace(/v\d+$/, '');
-  console.log('[arXiv Downloader] Intercepted download for:', rawId);
+  for (const url of urlsToTest) {
+    const match = url.match(/arxiv\.org\/pdf\/([^?#]+)/);
+    if (match) {
+      rawId = match[1].replace(/\.pdf$/i, '').replace(/v\d+$/, '');
+      break;
+    }
+  }
 
-  renameDownload(rawId, suggest);
-  return true; // async suggest
+  if (rawId) {
+    console.log('[arXiv Downloader] Intercepted direct download for:', rawId);
+    renameDownload(rawId, suggest);
+    return true; // async suggest
+  }
+
+  // 2. If it's a blob from the Chrome PDF viewer, use active tab URL or filename
+  if (item.url.startsWith('blob:chrome-extension://')) {
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+      let activeTabUrl = tabs && tabs[0] ? tabs[0].url : '';
+      let tabMatch = activeTabUrl && activeTabUrl.match(/arxiv\.org\/pdf\/([^?#]+)/);
+      
+      if (tabMatch) {
+        rawId = tabMatch[1].replace(/\.pdf$/i, '').replace(/v\d+$/, '');
+        console.log('[arXiv Downloader] Intercepted blob download from active tab for:', rawId);
+        renameDownload(rawId, suggest);
+      } else {
+        // Fallback: Try to parse arXiv ID from the suggested filename
+        const basename = item.filename ? item.filename.split(/[/\\]/).pop() : '';
+        const fileMatch = basename.match(/^([a-z\-]+(?:_[a-zA-Z]{2})?_?\d{7}(?:v\d+)?|\d{4}\.\d{4,5}(?:v\d+)?)\.pdf$/i);
+        
+        if (fileMatch) {
+          rawId = fileMatch[1].replace(/_/g, '/').replace(/v\d+$/, '');
+          console.log('[arXiv Downloader] Intercepted blob download from filename for:', rawId);
+          renameDownload(rawId, suggest);
+        } else {
+          suggest();
+        }
+      }
+    });
+    return true; // async suggest
+  }
 });
 
 async function renameDownload(arxivId, suggest) {
