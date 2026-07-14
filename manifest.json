@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "arXiv Paper Downloader",
   "description": "Download arXiv papers with customizable filenames. Default: FirstAuthor-Year-Title",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "permissions": ["downloads", "storage", "activeTab"],
   "host_permissions": ["https://arxiv.org/*", "https://export.arxiv.org/*"],
   "background": {

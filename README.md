@@ -11,6 +11,8 @@ A Chrome extension that automatically renames arXiv paper downloads with a custo
 
 ## Features
 
+- **Scoped interception** - Only direct arXiv PDF downloads and verified arXiv downloads from Chrome's built-in PDF viewer participate in filename determination; unrelated extension Blob downloads are ignored
+
 - **Auto-rename on download** — When you download a PDF from arXiv's PDF viewer, the file is automatically renamed based on paper metadata
 - **Popup download** — Click the extension icon on any arXiv abstract page to download with a custom filename
 - **Customizable format** — Define your own filename pattern using tokens
