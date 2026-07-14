@@ -2,7 +2,7 @@
 
 ![demo](./demo.gif)
 
-Stop manually renaming files like `2603.03326v1.pdf` every time you download a paper from `arXiv`. This is a Chrome extension which automatically renames arXiv paper downloads using a customizable filename format.
+Stop manually renaming files like `2603.03326v1.pdf` every time you download a paper from `arXiv`. This Chrome extension automatically renames arXiv paper downloads using a customizable filename format.
 
 **Default format:** `FirstAuthorSurname-YYYY-Title.pdf`
 
