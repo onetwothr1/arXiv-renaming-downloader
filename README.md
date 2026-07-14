@@ -1,5 +1,7 @@
 # arXiv Paper Downloader
 
+![demo](./demo.gif)
+
 A Chrome extension that automatically renames arXiv paper downloads with a customizable filename format.
 
 **Default format:** `FirstAuthorSurname-YYYY-Title.pdf`
@@ -11,15 +13,18 @@ A Chrome extension that automatically renames arXiv paper downloads with a custo
 
 ## Features
 
-- **Scoped interception** - Only direct arXiv PDF downloads and verified arXiv downloads from Chrome's built-in PDF viewer participate in filename determination; unrelated extension Blob downloads are ignored
-
-- **Auto-rename on download** — When you download a PDF from arXiv's PDF viewer, the file is automatically renamed based on paper metadata
+- **On-page download button** - Click the icon-labeled `Download` button directly below `View PDF` on an arXiv abstract page(`arxiv.org/abs/*`) to download using your saved filename settings
+- **Auto-rename on download** — When you download a PDF from arXiv's PDF viewer(`arxiv.org/pdf/*`), the file is automatically renamed based on paper metadata
 - **Popup download** — Click the extension icon on any arXiv abstract page to download with a custom filename
 - **Customizable format** — Define your own filename pattern using tokens
+
+- **Scoped interception** - Only direct arXiv PDF downloads and verified arXiv downloads from Chrome's built-in PDF viewer participate in filename determination; unrelated extension Blob downloads are ignored
 - **API fallback** — Even without visiting the abstract page first, metadata is fetched from the arXiv API
 - **Smart caching** — Paper metadata is cached when you visit abstract pages for instant renaming
 
-## Available Tokens
+
+## Filename Customization
+**Available Tokens**
 
 | Token | Description | Example |
 |-------|-------------|---------|
@@ -53,8 +58,9 @@ A Chrome extension that automatically renames arXiv paper downloads with a custo
 ## How It Works
 
 1. **Abstract page** (`arxiv.org/abs/*`) — The content script extracts paper metadata from `<meta>` tags and caches it locally
-2. **PDF download** — When Chrome initiates a download from `arxiv.org/pdf/*`, the background service worker intercepts the filename determination and suggests the custom filename
-3. **Fallback** — If no cached metadata is found (e.g., navigating directly to a PDF URL), the extension fetches metadata from the [arXiv API](https://info.arxiv.org/help/api/index.html)
+2. **On-page download** — The extension adds an icon-labeled `Download` button below `View PDF` and starts a renamed download using the saved settings
+3. **PDF download** — When Chrome initiates a download from `arxiv.org/pdf/*`, the background service worker intercepts the filename determination and suggests the custom filename
+4. **Fallback** — If no cached metadata is found (e.g., navigating directly to a PDF URL), the extension fetches metadata from the [arXiv API](https://info.arxiv.org/help/api/index.html)
 
 ## License
 
