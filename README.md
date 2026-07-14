@@ -2,7 +2,7 @@
 
 ![demo](./demo.gif)
 
-A Chrome extension that automatically renames arXiv paper downloads with a customizable filename format.
+Stop manually renaming files like `2603.03326v1.pdf` every time you download a paper from `arXiv`. This is a Chrome extension which automatically renames arXiv paper downloads using a customizable filename format.
 
 **Default format:** `FirstAuthorSurname-YYYY-Title.pdf`
 
@@ -13,14 +13,13 @@ A Chrome extension that automatically renames arXiv paper downloads with a custo
 
 ## Features
 
-- **On-page download button** - Click the icon-labeled `Download` button directly below `View PDF` on an arXiv abstract page(`arxiv.org/abs/*`) to download using your saved filename settings
-- **Auto-rename on download** — When you download a PDF from arXiv's PDF viewer(`arxiv.org/pdf/*`), the file is automatically renamed based on paper metadata
-- **Popup download** — Click the extension icon on any arXiv abstract page to download with a custom filename
-- **Customizable format** — Define your own filename pattern using tokens
-
-- **Scoped interception** - Only direct arXiv PDF downloads and verified arXiv downloads from Chrome's built-in PDF viewer participate in filename determination; unrelated extension Blob downloads are ignored
-- **API fallback** — Even without visiting the abstract page first, metadata is fetched from the arXiv API
-- **Smart caching** — Paper metadata is cached when you visit abstract pages for instant renaming
+- **Auto-rename on download** — Automatically renames arXiv paper downloads using paper metadata, wherever you download them from
+- **Direct download button** — Adds a `Download` button with an icon below `View PDF` on arXiv abstract pages (`arxiv.org/abs/*`)
+- **Download on PDF viewer** — Automatically renames PDFs downloaded from arXiv's PDF viewer (`arxiv.org/pdf/*`)
+- **Popup download** — Lets you download the paper by clicking the extension icon on any arXiv abstract page
+- **Customizable format** — Define your own filename pattern
+- **API fallback** — Fetches metadata from the arXiv API even if you have not visited the abstract page first
+- **Smart caching** — Caches paper metadata when you visit abstract pages for instant renaming
 
 
 ## Filename Customization
