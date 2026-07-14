@@ -15,6 +15,12 @@
       "run_at": "document_idle"
     }
   ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/icon16.png"],
+      "matches": ["https://arxiv.org/*"]
+    }
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_title": "arXiv Paper Downloader"

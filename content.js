@@ -64,6 +64,88 @@
     console.log('[arXiv Downloader] Cached metadata for', metadata.arxivId);
   }
 
+  // ---- Add an explicit renamed-download button below each View PDF link ----
+  function createDownloadButton(placement, className) {
+    const button = document.createElement('a');
+    button.href = '#';
+    button.className = className;
+    button.dataset.arxivDownloaderButton = placement;
+    button.setAttribute('role', 'button');
+    button.setAttribute('aria-label', 'Download with arXiv Paper Downloader');
+    button.style.color = '#b31b1b';
+
+    const icon = document.createElement('img');
+    icon.src = chrome.runtime.getURL('icons/icon16.png');
+    icon.alt = '';
+    icon.width = 16;
+    icon.height = 16;
+    icon.style.marginRight = '6px';
+    icon.style.verticalAlign = '-3px';
+
+    button.append(icon, document.createTextNode('Download'));
+    button.addEventListener('click', handleInjectedDownload);
+    return button;
+  }
+
+  async function handleInjectedDownload(event) {
+    event.preventDefault();
+
+    const button = event.currentTarget;
+    if (button.dataset.downloadInProgress === 'true') return;
+
+    button.dataset.downloadInProgress = 'true';
+    button.setAttribute('aria-disabled', 'true');
+    button.style.pointerEvents = 'none';
+    button.style.opacity = '0.65';
+
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'downloadPdf',
+        metadata: extractMetadata()
+      });
+      if (!response || !response.ok) {
+        throw new Error(response && response.error ? response.error : 'Download failed');
+      }
+    } catch (err) {
+      console.error('[arXiv Downloader] Injected download failed:', err);
+    } finally {
+      delete button.dataset.downloadInProgress;
+      button.removeAttribute('aria-disabled');
+      button.style.pointerEvents = '';
+      button.style.opacity = '';
+    }
+  }
+
+  function injectDownloadButtons() {
+    const desktopPdfLink = document.querySelector(
+      '.extra-services a.abs-button.download-pdf[href^="/pdf/"]'
+    );
+    if (
+      desktopPdfLink &&
+      desktopPdfLink.parentElement &&
+      !document.querySelector('[data-arxiv-downloader-button="desktop"]')
+    ) {
+      const item = document.createElement('li');
+      item.appendChild(createDownloadButton('desktop', 'abs-button'));
+      desktopPdfLink.parentElement.insertAdjacentElement('afterend', item);
+    }
+
+    const mobilePdfLink = document.querySelector(
+      '#abs > a.mobile-submission-download[href^="/pdf/"]'
+    );
+    if (
+      mobilePdfLink &&
+      !document.querySelector('[data-arxiv-downloader-button="mobile"]')
+    ) {
+      mobilePdfLink.insertAdjacentElement(
+        'afterend',
+        createDownloadButton('mobile', 'mobile-submission-download')
+      );
+    }
+  }
+
+  injectDownloadButtons();
+
   // ---- Download via fetch + blob + a[download] ----
   async function downloadWithName(url, filename) {
     try {
